@@ -1,4 +1,5 @@
 const repository = require('../repository/orderDetailsRepository');
+const orderDetailValSchema = require('../middlewares/validation/orderDetailsValidation')
 
 orderDetaiilsController = {
 
@@ -14,6 +15,12 @@ orderDetaiilsController = {
 
     // Add order details.
     async addOrderDetails(req, res) {
+            // Validate the request body against the schema
+            const { error } = orderDetailValSchema.validate(req.body);
+            if (error) {
+                // Return validation error message
+                return res.status(400).json({ error: error.details[0].message });
+            }
         const addOrderDetailsData = await repository.addOrderDetails(req);
         if (addOrderDetailsData) {
             return res.status(200).json({
@@ -48,6 +55,12 @@ orderDetaiilsController = {
 
     // Update order details
     async updateOrderDetails(req, res) {
+        // Validate the request body against the schema
+        const { error } = orderDetailValSchema.validate(req.body);
+        if (error) {
+            // Return validation error message
+            return res.status(400).json({ error: error.details[0].message });
+        }
         const updateOrderDetailsData = await repository.updateOrderDetail(req);
         if (updateOrderDetailsData) {
             return res.status(200).json({

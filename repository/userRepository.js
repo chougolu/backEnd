@@ -7,18 +7,24 @@ userRepository = {
 
     //Insert user details
     registerUserDetail(req, hashedRegisterPswd) {
-        var userDetailRes = User.create({
+
+        const userDetail = ({
             email: req.body.email,
             password: hashedRegisterPswd,
             firstName: req.body.firstName,
             lastName: req.body.lastName,
             telephone: req.body.telephone,
-            profileImg: req.file.path
         });
+
+        if(req.file && req.file.filename){
+            userDetail.profileImg = req.file.filename;
+        }
+
+        var userDetailRes = User.create(userDetail);
         return userDetailRes;
     },
 
-    //Insert user address details
+    // Insert user address details
     registerUserAddressDetail(req, userId) {
         var userAddressDetailRes = UserAddress.create({
             userId,
@@ -100,7 +106,7 @@ userRepository = {
 
     // Find user address details for profile 
     async findUserAddressDetail(req) {
-        const userAddressData = await User.findOne({
+        const userAddressData = await UserAddress.findOne({
             where: {
                 id: req.user.id
             }
@@ -108,24 +114,70 @@ userRepository = {
         return userAddressData;
     },
 
+    // Find user by email and telephone
+    async findUserByEmailAndTelephone(req) {
+        const findByEmailAndTelephoneData = await User.findOne({
+            where: {
+                [Op.or]: [
+                    { email: req.body.email },
+                    { telephone: req.body.telephone }
+                ]
+            }
+        });
+        return findByEmailAndTelephoneData;
+    },
+
+    // Find user by email 
+    async findUserByEmail(req) {
+        const findByEmailData = await User.findOne({
+            where: { email: req.body.email }
+        });
+        return findByEmailData;
+    },
+
+    // Find user by telephone 
+    async findUserByTelephone(req) {
+        const findByTelephoneData = await User.findOne({
+            where: { telephone: req.body.telephone }
+        });
+        return findByTelephoneData;
+    },
+
+    // Find user by mobile
+    async findUserByMobile(req) {
+        const findByMobileData = await UserAddress.findOne({
+            where: {
+                mobile: req.body.mobile
+            }
+        });
+        return findByMobileData;
+    },
+
     // Update user details
-    async updateUserDetail(req, hashedPassForProfileUpdate) {
-        const updateUserDetail = await User.update(
-            {
-                email: req.body.email,
-                password: hashedPassForProfileUpdate,
-                firstName: req.body.firstName,
-                lastName: req.body.lastName,
-                telephone: req.body.telephone,
-                profileImg: req.file.path
-            },
-            {
-                where: {
-                    id: req.user.id
-                }
-            });
+    async updateUserDetail(req) {
+        const updateData = {
+            email: req.body.email,
+            password: req.body.password,
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            telephone: req.body.telephone,
+        };
+    
+        // Check if req.file exists and has the filename property
+        if (req.file && req.file.filename) {
+            updateData.profileImg = req.file.filename;
+        }
+    
+        const options = {
+            where: {
+                id: req.user.id
+            }
+        };
+    
+        const updateUserDetail = await User.update(updateData, options);
         return updateUserDetail;
     },
+    
 
     // Update user details
     async updateUserAddressDetail(req) {
@@ -176,14 +228,14 @@ userRepository = {
     },
 
     // Update password by e-mail
-    async updatePasswordByMail(req,hashedPd){
+    async updatePasswordByMail(req, hashedPd) {
         const updatePswdData = await User.update({ password: hashedPd }, {
             where: {
                 email: req.body.email
             }
         });
         return updatePswdData;
-    }  
+    }
 }
 
 module.exports = userRepository;

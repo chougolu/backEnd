@@ -18,7 +18,7 @@ productRepository = {
             description: req.body.description,
             SKU: req.body.SKU,
             price: req.body.price,
-            productImg: req.file.path
+            productImg: req.file.filename
         });
         return addProductData;
     },
@@ -27,6 +27,16 @@ productRepository = {
     async getAllProduct() {
         const allProductsData = await Product.findAll({});
         return allProductsData;
+    },
+
+    // Find product by category
+    async findProductByCategory(req) {
+        const findProductByCategoryData = await Product.findAll({
+            where: {
+                product_category_id: req.params.id
+            }
+        });
+        return findProductByCategoryData;
     },
 
     // Edit product data
@@ -41,20 +51,27 @@ productRepository = {
 
     // Update product data
     async updateProduct(req) {
-        const updateProductData = await Product.update(
-            {
-                product_category_id: req.body.product_category_id,
-                name: req.body.name,
-                description: req.body.description,
-                SKU: req.body.SKU,
-                price: req.body.price,
-                productImg: req.file.path
-            },
-            {
-                where: {
-                    id: req.params.id
-                }
-            });
+
+        const updateData = {
+            product_category_id: req.body.product_category_id,
+            name: req.body.name,
+            description: req.body.description,
+            SKU: req.body.SKU,
+            price: req.body.price,
+        };
+
+        // Check if req.file exists and has the filename property
+        if (req.file && req.file.filename) {
+            updateData.productImg = req.file.filename
+        }
+
+        const options = {
+            where: {
+                id: req.params.id
+            }
+        };
+
+        const updateProductData = await Product.update(updateData, options);
         return updateProductData;
     },
 

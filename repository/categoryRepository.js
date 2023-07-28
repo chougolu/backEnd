@@ -22,9 +22,18 @@ categoryRepository = {
         return findOneCategoryRes
     },
 
+    // Find all category for count total record
+    async findAllCat() {
+        const findCat = await Category.findAll({});
+        return findCat;
+    },
+
     // Find all categories
-    async findAllCategory() {
-        const findCategoryData = await Category.findAll({});
+    async findAllCategory(limit, skip) {
+        const findCategoryData = await Category.findAll({
+            limit,
+            offset:skip
+        });
         return findCategoryData;
     },
 
@@ -36,6 +45,16 @@ categoryRepository = {
             }
         });
         return findOneCategoryData
+    },
+
+    // Find category by category name
+    async categoryFindByCategoryName(req) {
+        categoryFindData = await Category.findOne({
+            where: {
+                name: req.body.name
+            }
+        });
+        return categoryFindData
     },
 
     // Update category

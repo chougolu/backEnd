@@ -1,4 +1,6 @@
 const repository = require('../repository/orderItemsRepository');
+const orderItemValSchema = require('../middlewares/validation/orderItemsValidation');
+
 orderItemsController = {
 
     // Get order items.
@@ -19,8 +21,14 @@ orderItemsController = {
         }
     },
 
-    // Store order items.
+    // Add order items.
     async addOrderItems(req, res) {
+        // Validate the request body against the schema
+        const { error } = orderItemValSchema.validate(req.body);
+        if (error) {
+            // Return validation error message
+            return res.status(400).json({ error: error.details[0].message });
+        }
         const addOrderItemsData = await repository.addOrderItems(req);
         if (addOrderItemsData) {
             return res.status(200).json({
@@ -57,6 +65,12 @@ orderItemsController = {
 
     // Update order items
     async updateOrderItems(req, res) {
+        // Validate the request body against the schema
+        const { error } = orderItemValSchema.validate(req.body);
+        if (error) {
+            // Return validation error message
+            return res.status(400).json({ error: error.details[0].message });
+        }
         const updateOrderItemsData = await repository.updateOrderItems(req);
         if (updateOrderItemsData == 1) {
             return res.status(200).json({
@@ -65,7 +79,7 @@ orderItemsController = {
                 status: 200
             });
         } else {
-            return res.status(process.env.UNSUCCESSFULL).json({
+            return res.status(400).json({
                 'message': 'Something went wrong.',
                 success: false,
                 status: 400

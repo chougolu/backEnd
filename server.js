@@ -1,5 +1,6 @@
 const express = require('express');
 var bodyParser = require('body-parser');
+const cors = require('cors');
 const dotenv = require('dotenv');
 const userRouter = require('./routes/userRoutes');
 const categoryRouter = require('./routes/categoryRoutes');
@@ -10,11 +11,15 @@ const fileUploadRouter = require('./routes/fileUploadRoutes')
 require('./models/index');
 const app = express()
 
+app.use(cors());
+
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // parse application/json
 app.use(bodyParser.json());
+
+app.use('/', express.static('uploads'));
 
 app.use(userRouter);
 app.use(categoryRouter);

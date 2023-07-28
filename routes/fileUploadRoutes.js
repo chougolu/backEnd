@@ -1,5 +1,5 @@
 const express = require('express');
-const upload = require('../middlewares/upload')
+const upload = require('../middlewares/imageUploads/upload')
 const db = require('../models/index');
 const FileUpload = db.FileUpload;
 const router = express.Router();

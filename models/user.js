@@ -4,29 +4,21 @@ module.exports = (sequelize, DataTypes) => {
         // Model attributes are defined here
         email: {
             type: DataTypes.STRING,
-            allowNull: false
         },
         password: {
             type: DataTypes.STRING,
-            allowNull: false
         },
         firstName: {
             type: DataTypes.STRING,
-            allowNull: false
         },
         lastName: {
             type: DataTypes.STRING
         },
         telephone: {
             type: DataTypes.STRING,
-            allowNull: false
         },
         profileImg:{
             type: DataTypes.STRING,
-            allowNull: false
-        },
-        token:{
-            type: DataTypes.STRING
         }
     }, {
         tableName: 'users',
